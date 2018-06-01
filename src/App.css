@@ -1,0 +1,17 @@
+body {
+  padding: 0px;
+  margin: 0px;
+  background-color: #dcd0c0;
+}
+
+.Menu {
+  margin: 10px;
+  height: 50px;
+  background-color: #f4f4f4;
+  border-radius: 4px;
+}
+
+.Login {
+  background-color: #f4f4f4;
+}
+/*# sourceMappingURL=App.css.map */
