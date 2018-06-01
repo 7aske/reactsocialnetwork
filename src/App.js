@@ -13,17 +13,19 @@ class App extends Component {
 			display: []
 		};
 		store.subscribe(() => {
+			let display = store.getState().display.map(c => {
+				switch (c) {
+					case 'Menu':
+						return <Menu />;
+					case 'Login':
+						return <Login />;
+					case 'Register':
+						return <Register />;
+				}
+			});
+			console.log('display', display);
 			this.setState({
-				display: store.getState().display.map(c => {
-					switch (c) {
-						case 'Menu':
-							return <Menu />;
-						case 'Login':
-							return <Login />;
-						case 'Register':
-							return <Register />;
-					}
-				})
+				display: display
 			});
 		});
 	}

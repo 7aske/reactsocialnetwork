@@ -1,16 +1,20 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { updateMenu } from '../actions/userActions';
 class Menu extends Component {
 	constructor() {
 		super();
+		this.state = {
+			display: ['Menu']
+		};
 		this.onClick = this.onClick.bind(this);
-		console.log(this);
 	}
 	onClick(e) {
 		e.preventDefault();
-		this.props.updateMenu({
-			display: ['Menu', e.target.href]
+		this.setState({
+			display: ['Menu', e.target.innerText]
 		});
+		this.props.updateMenu(this.state);
 	}
 	render() {
 		return (
@@ -55,4 +59,4 @@ class Menu extends Component {
 	}
 }
 
-export default Menu;
+export default connect(null, { updateMenu })(Menu);

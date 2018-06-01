@@ -1,8 +1,8 @@
 import { combineReducers } from 'redux';
 import loginReducer from './loginReducer';
-import displayReducer from './displayReducer';
+import menuReducer from './menuReducer';
 
 export default combineReducers({
-	display: displayReducer,
+	display: menuReducer,
 	login: loginReducer
 });
