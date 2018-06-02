@@ -12,22 +12,6 @@ class App extends Component {
 		this.state = {
 			display: []
 		};
-		store.subscribe(() => {
-			let display = store.getState().display.map(c => {
-				switch (c) {
-					case 'Menu':
-						return <Menu />;
-					case 'Login':
-						return <Login />;
-					case 'Register':
-						return <Register />;
-				}
-			});
-			console.log('display', display);
-			this.setState({
-				display: display
-			});
-		});
 	}
 	componentWillMount() {
 		this.setState({

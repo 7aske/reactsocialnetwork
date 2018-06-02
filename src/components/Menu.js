@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { updateMenu } from '../actions/userActions';
 class Menu extends Component {
 	constructor() {
 		super();
@@ -14,7 +13,6 @@ class Menu extends Component {
 		this.setState({
 			display: ['Menu', e.target.innerText]
 		});
-		this.props.updateMenu(this.state);
 	}
 	render() {
 		return (
@@ -59,4 +57,4 @@ class Menu extends Component {
 	}
 }
 
-export default connect(null, { updateMenu })(Menu);
+export default Menu;
