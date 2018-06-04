@@ -4,14 +4,41 @@ body {
   background-color: #dcd0c0;
 }
 
+.App {
+  position: relative;
+}
+
+.activeNav {
+  background-color: #7c7c7c;
+  border-color: #7c7c7c;
+}
+
 .Menu {
+  position: relative;
+  z-index: 100;
   margin: 10px;
   height: 50px;
   background-color: #f4f4f4;
   border-radius: 4px;
 }
 
+.Menu .nav-item {
+  padding: 5px 10px;
+  background-color: #f4f4f4;
+  border-radius: 2px;
+}
+
 .Login {
   background-color: #f4f4f4;
+}
+
+.jumbotron {
+  text-align: center;
+  border-bottom: 0.05rem solid #f4f4f4;
+}
+
+.jumbotron .btn {
+  padding: 0.75rem 1.5rem;
+  font-size: 1.5rem;
 }
 /*# sourceMappingURL=App.css.map */

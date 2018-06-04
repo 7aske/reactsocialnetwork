@@ -1,22 +1,25 @@
 import React, { Component } from 'react';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { updateMenu } from '../actions/menuActions';
 class Menu extends Component {
-	constructor() {
-		super();
-		this.state = {
-			display: ['Menu']
-		};
-		this.onClick = this.onClick.bind(this);
+	constructor(props) {
+		super(props);
+		this.onMenuClick = this.onMenuClick.bind(this);
 	}
-	onClick(e) {
+	onMenuClick(e) {
 		e.preventDefault();
-		this.setState({
-			display: ['Menu', e.target.innerText]
+		console.log(document.querySelectorAll('#navbar .nav-item'));
+
+		document.querySelectorAll('#navbar .nav-item').forEach(i => {
+			i.classList.remove('activeNav');
 		});
+		e.target.parentElement.classList.add('activeNav');
+		this.props.onMenuClick(['Menu', e.target.innerText]);
 	}
 	render() {
 		return (
-			<nav className="navbar navbar-expand-lg navbar-light bg-light Menu">
+			<nav className="navbar navbar-expand-lg navbar-light Menu">
 				<a className="navbar-brand" href="#">
 					Social Network
 				</a>
@@ -31,30 +34,50 @@ class Menu extends Component {
 				>
 					<span className="navbar-toggler-icon" />
 				</button>
-				<div className="collapse navbar-collapse" id="navbar">
-					<div className="navbar-nav">
-						<a className="nav-item nav-link active" href="#">
-							Home <span className="sr-only">(current)</span>
-						</a>
-						<a
-							className="nav-item nav-link"
-							href="Login"
-							onClick={this.onClick}
-						>
-							Login
-						</a>
-						<a
-							className="nav-item nav-link"
-							href="Register"
-							onClick={this.onClick}
-						>
-							Register
-						</a>
-					</div>
+				<div className="collapse navbar-collapse w-100" id="navbar">
+					<ul className="navbar-nav">
+						<li className="nav-item">
+							<a
+								className="nav-link"
+								href="Home"
+								onClick={this.onMenuClick}
+							>
+								Home
+							</a>
+						</li>
+						<li className="nav-item">
+							<a
+								className="nav-link"
+								href="Login"
+								onClick={this.onMenuClick}
+							>
+								Login
+							</a>
+						</li>
+						<li className="nav-item">
+							<a
+								className="nav-link"
+								href="Register"
+								onClick={this.onMenuClick}
+							>
+								Register
+							</a>
+						</li>
+					</ul>
 				</div>
 			</nav>
 		);
 	}
 }
-
-export default Menu;
+const mapStatetoProps = state => {
+	return state;
+};
+const mapActionsToProps = (dispatch, props) => {
+	return bindActionCreators(
+		{
+			onMenuClick: updateMenu
+		},
+		dispatch
+	);
+};
+export default connect(mapStatetoProps, mapActionsToProps)(Menu);

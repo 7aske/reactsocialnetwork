@@ -1,15 +1,19 @@
 import React, { Component } from 'react';
-
+import Request from '../Request';
+import RegError from './RegError';
 class Register extends Component {
 	constructor() {
 		super();
 		this.state = {
-			firstName: '',
-			lastName: '',
-			email: '',
-			username: '',
-			password: '',
-			confirm: ''
+			newUser: {
+				firstName: '',
+				lastName: '',
+				email: '',
+				username: '',
+				password: '',
+				confirm: ''
+			},
+			regErrors: []
 		};
 		this.onSubmit = this.onSubmit.bind(this);
 		this.onChange = this.onChange.bind(this);
@@ -23,11 +27,39 @@ class Register extends Component {
 	onSubmit(e) {
 		e.preventDefault();
 		console.log(this.state);
+		const url = new URL(window.location).origin + '/users/register';
+		console.log(url);
+		const newUser = {
+			firstName: this.state.newUser.firstName,
+			lastName: this.state.newUser.lastName,
+			email: this.state.newUser.email,
+			username: this.state.newUser.username,
+			password: this.state.newUser.password,
+			confirm: this.state.newUser.confirm
+		};
+		let request = new Request('post', url, JSON.stringify(newUser), {
+			'Content-type': 'Application/json'
+		});
+		request
+			.send()
+			.then(result => {
+				if (result.status === 400) {
+					console.log(result);
+					let regErrors = JSON.parse(result.response).map(e => {
+						return <RegError error={e} />;
+					});
+					this.setState({
+						regErrors: regErrors
+					});
+				}
+			})
+			.catch(err => console.log(err));
 	}
 	render() {
 		return (
-			<div className="Login card container col-4 p-4">
+			<div className="Login card container col-6 p-4">
 				<form onSubmit={this.onSubmit}>
+					<div className="input-group">{this.state.regErrors}</div>
 					<div className="form-group">
 						<label htmlFor="firstName">First Name</label>
 						<input
