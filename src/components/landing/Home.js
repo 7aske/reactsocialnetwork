@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { updateMenu } from '../../actions/menuActions';
+import {
+	updateUser,
+	updateMenu,
+	updateDisplay
+} from '../../actions/appActions';
 class Home extends Component {
 	constructor(props) {
 		super(props);
@@ -36,4 +40,7 @@ class Home extends Component {
 const mapActionsToProps = {
 	onMenuClick: updateMenu
 };
-export default connect(null, mapActionsToProps)(Home);
+export default connect(
+	null,
+	mapActionsToProps
+)(Home);

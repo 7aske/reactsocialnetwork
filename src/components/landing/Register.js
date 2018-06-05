@@ -17,10 +17,13 @@ class Register extends Component {
 		};
 		this.onSubmit = this.onSubmit.bind(this);
 		this.onChange = this.onChange.bind(this);
+		this.clearErrors = this.clearErrors.bind(this);
 	}
 	onChange(e) {
+		let newUser = this.state.newUser;
+		newUser[e.target.name] = e.target.value;
 		let state = {
-			[e.target.name]: e.target.value
+			newUser: newUser
 		};
 		this.setState(state);
 	}
@@ -45,15 +48,24 @@ class Register extends Component {
 			.then(result => {
 				if (result.status === 400) {
 					console.log(result);
-					let regErrors = JSON.parse(result.response).map(e => {
-						return <RegError error={e} />;
-					});
+					let regErrors = JSON.parse(result.response).errors.map(
+						e => {
+							return <RegError error={e} />;
+						}
+					);
 					this.setState({
 						regErrors: regErrors
 					});
+				} else if (result.status === 201) {
+					document.cookie = `x-access-token=${result.token}; path=/`;
 				}
 			})
 			.catch(err => console.log(err));
+	}
+	clearErrors() {
+		this.setState({
+			regErrors: []
+		});
 	}
 	render() {
 		return (
@@ -132,7 +144,11 @@ class Register extends Component {
 							value={this.state.confirm}
 						/>
 					</div>
-					<button type="submit" className="btn btn-secondary">
+					<button
+						onClick={this.clearErrors}
+						type="submit"
+						className="btn btn-secondary"
+					>
 						Register
 					</button>
 				</form>

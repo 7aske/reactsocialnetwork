@@ -5,15 +5,18 @@ const User = require('../models/User');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 
-User.find({})
-	.update({ $set: { online: false } })
-	.exec()
-	.then(result => console.log(result.nModified))
-	.catch(err => console.log(err));
-
+///////////////////////
+const jwt = require('jsonwebtoken');
+const config = require('../config/config');
+//////////////////////
+User.update({}, { online: false }, { multi: true }, (err, raw) => {
+	console.log('Users online: ' + raw.nModified);
+});
 router.get('/', (req, res) => {
 	res.send('Hello Users');
 });
+
+//REGISTATION//////////////////////////////////////////
 router.post('/register', (req, res) => {
 	console.log(req.body);
 	req.checkBody('firstName', 'First name is required.').notEmpty();
@@ -23,103 +26,114 @@ router.post('/register', (req, res) => {
 	req.checkBody('email', 'Email is invalid.').isEmail();
 	req.checkBody('password', 'Password is required.').notEmpty();
 	req.checkBody('confirm', 'Confirm your password.').notEmpty();
-	req
-		.checkBody('password', 'Passwords do not match.')
-		.equals(req.body.confirm);
-
-	let errors = req.validationErrors();
-	if (errors) {
-		let message = errors.map(e => {
+	req.checkBody('password', 'Passwords do not match.').equals(
+		req.body.confirm
+	);
+	if (req.validationErrors()) {
+		let errors = req.validationErrors().map(e => {
 			return e.msg;
 		});
-		res.status(400).send(message);
+		res.status(400).send({ errors: errors });
 	} else {
 		User.find({
 			$or: [{ email: req.body.email }, { username: req.body.username }]
 		})
 			.exec()
-			.then(result => {
-				if (result.length === 0) {
+			.then(user => {
+				if (user.length === 0) {
+					const newToken = jwt.sign({ id: user._id }, config.secret, {
+						expiresIn: 86400 * 7 //Expires in a week
+					});
 					const newUser = new User({
 						firstName: req.body.firstName,
 						lastName: req.body.lastName,
 						username: req.body.username,
 						email: req.body.email,
 						password: req.body.password,
-						confirm: req.body.confirm
+						confirm: req.body.confirm,
+						token: newToken
 					});
+
 					User.createUser(newUser, result => {
 						console.log(result);
-						res.send({
-							message: 'Success'
-						});
+						res.status(201).send({ auth: true, token: newToken });
 					});
 				} else {
-					console.log('User already exists');
+					res.status(400).send({ errors: ['User already exists.'] });
 				}
 			})
 			.catch(err => console.log(err));
 	}
 });
-passport.use(
-	new LocalStrategy((username, password, done) => {
-		User.findOne({ $or: [{ username: username }, { email: username }] })
+//LOGIN//////////////////////////////////////////////////////
+router.post('/login', (req, res) => {
+	req.checkBody('username', 'Username is required.').notEmpty();
+	req.checkBody('password', 'Password is required.').notEmpty();
+	console.log(req.cookies);
+	if (req.validationErrors()) {
+		let errors = req.validationErrors().map(e => {
+			return e.msg;
+		});
+		res.status(400).send({ errors: errors });
+	} else {
+		const username = req.body.username;
+		const password = req.body.password;
+		const token = req.cookies['x-access-token'];
+
+		User.findOne({ $or: [{ email: username }, { username: username }] })
 			.exec()
-			.then(result => {
-				if (!result) {
-					return done(null, false);
-				} else {
-					if (User.comparePassword(password, result.password)) {
+			.then(user => {
+				let id = user._id;
+				if (user) {
+					if (User.comparePassword(password, user.password)) {
+						let newToken = jwt.sign({ id: user }, config.secret, {
+							expiresIn: 86400 * 7
+						});
 						User.findOneAndUpdate(
-							{ username: result.username },
+							{ _id: id },
 							{
 								$set: {
-									lastLogin: new Date(),
-									online: true
+									online: true,
+									token: newToken
 								}
 							}
 						)
+							.select({
+								firstName: 1,
+								lastName: 1,
+								email: 1,
+								username: 1
+							})
 							.exec()
-							.then(result => console.log(result))
+							.then(result =>
+								res.status(200).send({
+									auth: true,
+									token: newToken,
+									user: result
+								})
+							)
 							.catch(err => console.log(err));
-						return done(null, result);
-					} else {
-						return done(null, false);
 					}
+				} else {
+					res.status(404).send({ errors: ['User not found.'] });
 				}
 			})
 			.catch(err => console.log(err));
-	})
-);
-passport.serializeUser((user, done) => {
-	console.log(user.id);
-	done(null, user.id);
-});
-
-passport.deserializeUser((id, done) => {
-	console.log(id);
-	User.findById(id, (err, user) => {
-		done(err, user);
-	});
-});
-router.post('/login', (req, res) => {
-	console.log(req.body);
-	passport.authenticate('local', (err, user) => {
-		if (err) return res.status(400).send({ message: err });
-		if (!user) return res.status(401).send({ message: 'Unautohorized' });
-		req.logIn(user, err => {
-			if (err) return res.status(400).send({ message: err });
-			return res.status(200).send({ message: user.username });
-		});
-	})(req, res);
+	}
 });
 router.get('/logout', (req, res) => {
-	User.findOneAndUpdate({ _id: req.user._id }, { $set: { online: false } })
-		.exec()
-		.then(result => {
-			req.logout();
-			res.redirect('/');
-		})
-		.catch(err => console.log(err));
+	const token = req.cookies['x-access-token'];
+	jwt.verify(token, config.secret, function(err, decoded) {
+		User.findOneAndUpdate({ token: token }, { $set: { online: false } })
+			.exec()
+			.then(result => {
+				if (result) {
+					res.status(200).send({ success: 'success' });
+				} else {
+					res.status(403).send({ errors: ['Unauthorized.'] });
+				}
+			})
+			.catch(err => console.log(err));
+	});
 });
 module.exports = router;

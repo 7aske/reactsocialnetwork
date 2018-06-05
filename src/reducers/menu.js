@@ -1,9 +1,14 @@
-import { UPDATE_MENU } from '../actions/menuActions';
-const initialState = { display: ['Menu'] };
+import { UPDATE_MENU } from '../actions/appActions';
+//import { initialState } from '../initalState';
+const initialState = {
+	display: ['Menu', 'Home'],
+	user: null,
+	menu: 'LoggedOut'
+};
 const menuReducer = (state = initialState, { type, payload }) => {
 	switch (type) {
 		case UPDATE_MENU:
-			return payload.display;
+			return payload.menu;
 		default:
 			return state;
 	}

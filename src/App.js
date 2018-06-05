@@ -1,18 +1,21 @@
 import React, { Component } from 'react';
 import './App.css';
+import store from './store';
 import { Provider } from 'react-redux';
 import Menu from './components/Menu';
 import Home from './components/landing/Home';
 import Login from './components/landing/Login';
 import Register from './components/landing/Register';
-
-import store from './store';
+import Profile from './components/user/Profile';
+import UserHandler from './components/UserHandler';
 
 class App extends Component {
 	constructor() {
 		super();
 		this.state = {
-			display: []
+			display: [],
+			user: null,
+			menu: []
 		};
 		store.subscribe(() => {
 			this.setState({
@@ -26,11 +29,14 @@ class App extends Component {
 							return <Register />;
 						case 'Home':
 							return <Home />;
+						case 'Profile':
+							return <Profile />;
 					}
 				})
 			});
 		});
 	}
+
 	componentWillMount() {
 		this.setState({
 			display: store.getState().display.map(c => {
@@ -43,6 +49,8 @@ class App extends Component {
 						return <Register />;
 					case 'Home':
 						return <Home />;
+					case 'Profile':
+						return <Profile />;
 				}
 			})
 		});
@@ -50,7 +58,10 @@ class App extends Component {
 	render() {
 		return (
 			<Provider store={store}>
-				<div className="App">{this.state.display}</div>
+				<div className="App">
+					<UserHandler />
+					{this.state.display}
+				</div>
 			</Provider>
 		);
 	}

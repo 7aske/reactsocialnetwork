@@ -14,7 +14,6 @@ export default class Request {
 					xhr.setRequestHeader(key, this.headers[key]);
 				}
 			}
-
 			xhr.send(this.json);
 			xhr.onerror = function() {
 				reject({

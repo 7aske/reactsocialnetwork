@@ -12,6 +12,11 @@ const router = require('./routes/router');
 const api = require('./routes/api');
 const users = require('./routes/users');
 
+/////////////////////////////
+const cookieParser = require('cookie-parser');
+const jwt = require('jsonwebtoken');
+////////////////////////
+
 process.env.DEVELOPMENT = true;
 if (process.env.DEVELOPMENT) {
 	server.use(express.static(path.join(__dirname, 'static')));
@@ -26,15 +31,6 @@ mongoose
 
 server.use(bodyParser.urlencoded({ extended: false }));
 server.use(bodyParser.json());
-server.use(
-	session({
-		secret: 'I LOVE PANCAKES',
-		resave: true,
-		saveUninitialized: true
-	})
-);
-server.use(passport.initialize());
-server.use(passport.session());
 
 server.use(
 	expressValidator({
@@ -53,12 +49,7 @@ server.use(
 		}
 	})
 );
-
-server.use((req, res, next) => {
-	res.locals.user = req.user || null;
-	next();
-});
-
+server.use(cookieParser());
 server.use('/users', users);
 server.use('/api', api);
 server.use('/', router);
