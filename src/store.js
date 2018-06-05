@@ -4,7 +4,8 @@ import rootReducer from './reducers/root';
 const initialState = {
 	display: ['Menu', 'Home'],
 	user: null,
-	menu: 'LoggedOut'
+	menu: 'LoggedOut',
+	search: []
 };
 const store = createStore(
 	rootReducer,

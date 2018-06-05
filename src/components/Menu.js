@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import store from '../store';
 import { connect } from 'react-redux';
 import { updateUser, updateMenu, updateDisplay } from '../actions/appActions';
-
+import Search from './Search';
 class Menu extends Component {
 	constructor(props) {
 		super(props);
@@ -92,7 +92,7 @@ class Menu extends Component {
 class LoggedOut extends Component {
 	render() {
 		return (
-			<ul className="navbar-nav">
+			<ul className="navbar-nav w-100">
 				<li className="nav-item">
 					<a
 						className="nav-link"
@@ -120,6 +120,9 @@ class LoggedOut extends Component {
 						Register
 					</a>
 				</li>
+				<li className="nav-item">
+					<Search />
+				</li>
 			</ul>
 		);
 	}
@@ -127,7 +130,7 @@ class LoggedOut extends Component {
 class LoggedIn extends Component {
 	render() {
 		return (
-			<ul className="navbar-nav">
+			<ul className="navbar-nav w-100">
 				<li className="nav-item">
 					<a
 						className="nav-link"
@@ -154,6 +157,9 @@ class LoggedIn extends Component {
 					>
 						Logout
 					</a>
+				</li>
+				<li className="nav-item float-right">
+					<Search />
 				</li>
 			</ul>
 		);

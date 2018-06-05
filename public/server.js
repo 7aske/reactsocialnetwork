@@ -1,16 +1,16 @@
 const express = require('express');
 const server = express();
 const bodyParser = require('body-parser');
-const passport = require('passport');
 const mongoose = require('mongoose');
-const session = require('express-session');
 const expressValidator = require('express-validator');
 const path = require('path');
 const port = process.env.PORT || 3001;
 
+const connections = require('./routes/connections');
 const router = require('./routes/router');
 const api = require('./routes/api');
 const users = require('./routes/users');
+const posts = require('./routes/posts');
 
 /////////////////////////////
 const cookieParser = require('cookie-parser');
@@ -51,6 +51,8 @@ server.use(
 );
 server.use(cookieParser());
 server.use('/users', users);
+server.use('/connections', connections);
+server.use('/posts', posts);
 server.use('/api', api);
 server.use('/', router);
 

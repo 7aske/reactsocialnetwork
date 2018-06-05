@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import Request from '../Request';
 import RegError from './RegError';
+import { updateDisplay } from '../../actions/appActions';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 class Register extends Component {
 	constructor() {
 		super();
@@ -18,6 +21,10 @@ class Register extends Component {
 		this.onSubmit = this.onSubmit.bind(this);
 		this.onChange = this.onChange.bind(this);
 		this.clearErrors = this.clearErrors.bind(this);
+		this.updateDisplay = this.updateDisplay.bind(this);
+	}
+	updateDisplay(display) {
+		this.props.updateDisplay(display);
 	}
 	onChange(e) {
 		let newUser = this.state.newUser;
@@ -58,6 +65,7 @@ class Register extends Component {
 					});
 				} else if (result.status === 201) {
 					document.cookie = `x-access-token=${result.token}; path=/`;
+					this.updateDisplay(['Menu', 'Login']);
 				}
 			})
 			.catch(err => console.log(err));
@@ -156,5 +164,18 @@ class Register extends Component {
 		);
 	}
 }
-
-export default Register;
+const mapStateToProps = state => {
+	return state;
+};
+const mapActionsToProps = (dispatch, props) => {
+	return bindActionCreators(
+		{
+			updateDisplay: updateDisplay
+		},
+		dispatch
+	);
+};
+export default connect(
+	mapStateToProps,
+	mapActionsToProps
+)(Register);

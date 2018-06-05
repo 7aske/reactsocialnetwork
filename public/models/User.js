@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const shortid = require('shortid');
+const config = require('../config/config');
 const crypto = require('crypto');
 const userTemplate = new mongoose.Schema(
 	{
@@ -12,15 +13,20 @@ const userTemplate = new mongoose.Schema(
 		dateCreated: { type: Date, default: new Date() },
 		online: { type: Boolean, default: false },
 		lastLogin: { type: Date, default: new Date() },
-		token: { type: String, default: '' }
+		token: { type: String, default: '' },
+		posts: { type: Array, default: [] },
+		connections: { type: Array, default: [] },
+		notifications: { type: Array, default: [] }
 	},
 	{
 		collection: 'users'
 	}
 );
+userTemplate.index({ firstName: 'text', lastName: 'text' });
+
 module.exports = mongoose.model('User', userTemplate);
 module.exports.createUser = (newUser, callback) => {
-	const secret = 'PANCAKES';
+	const secret = config.hashSecret;
 	const hash = crypto
 		.createHmac('sha256', secret)
 		.update(newUser.password)
@@ -32,7 +38,7 @@ module.exports.createUser = (newUser, callback) => {
 		.catch(err => console.log(err));
 };
 module.exports.comparePassword = (loginPassword, databasePassword) => {
-	const secret = 'PANCAKES';
+	const secret = config.hashSecret;
 	const hash = crypto
 		.createHmac('sha256', secret)
 		.update(loginPassword)

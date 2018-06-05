@@ -3,7 +3,8 @@ import { UPDATE_DISPLAY } from '../actions/appActions';
 const initialState = {
 	display: ['Menu', 'Home'],
 	user: null,
-	menu: 'LoggedOut'
+	menu: 'LoggedOut',
+	search: []
 };
 const displayReducer = (state = initialState, { type, payload }) => {
 	switch (type) {

@@ -3,7 +3,8 @@ import { UPDATE_USER } from '../actions/appActions';
 const initialState = {
 	display: ['Menu', 'Home'],
 	user: null,
-	menu: 'LoggedOut'
+	menu: 'LoggedOut',
+	search: []
 };
 const userReducer = (state = initialState, { type, payload }) => {
 	switch (type) {

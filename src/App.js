@@ -8,6 +8,8 @@ import Login from './components/landing/Login';
 import Register from './components/landing/Register';
 import Profile from './components/user/Profile';
 import UserHandler from './components/UserHandler';
+import Timeline from './components/user/Timeline';
+import SearchResults from './components/user/SearchResults';
 
 class App extends Component {
 	constructor() {
@@ -31,6 +33,10 @@ class App extends Component {
 							return <Home />;
 						case 'Profile':
 							return <Profile />;
+						case 'Timeline':
+							return <Timeline />;
+						case 'SearchResults':
+							return <SearchResults />;
 					}
 				})
 			});
@@ -51,6 +57,10 @@ class App extends Component {
 						return <Home />;
 					case 'Profile':
 						return <Profile />;
+					case 'Timeline':
+						return <Timeline />;
+					case 'SearchResults':
+						return <SearchResults />;
 				}
 			})
 		});

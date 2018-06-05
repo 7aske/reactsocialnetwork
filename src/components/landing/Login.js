@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import Request from '../Request';
 import RegError from './RegError';
 import { bindActionCreators } from 'redux';
-// import store from '../../store';
 import { connect } from 'react-redux';
 import {
 	updateUser,

@@ -25,3 +25,12 @@ export function updateMenu(menu) {
 		}
 	};
 }
+export const SEARCH_RESULTS = 'SEARCH_RESULTS';
+export function searchResults(search) {
+	return {
+		type: SEARCH_RESULTS,
+		payload: {
+			search: search
+		}
+	};
+}

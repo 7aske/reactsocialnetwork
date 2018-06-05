@@ -1,3 +1,6 @@
 const secret = 'I LOVE PANCAKES';
-
-module.exports = { secret: secret };
+const hashSecret = 'I REALLY DONT LIKE PANCAKES';
+module.exports = {
+	secret: secret,
+	hashSecret: hashSecret
+};

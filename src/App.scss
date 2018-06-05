@@ -34,3 +34,12 @@ body {
 	padding: 0.75rem 1.5rem;
 	font-size: 1.5rem;
 }
+#search {
+	.search-dropdown {
+		position: absolute;
+		display: none;
+	}
+}
+.ProfilePicture {
+	width: 300px;
+}
