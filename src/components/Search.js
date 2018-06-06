@@ -13,6 +13,13 @@ class Search extends Component {
 		};
 		this.onChange = this.onChange.bind(this);
 		this.onSubmit = this.onSubmit.bind(this);
+		this.onItemClick = this.onItemClick.bind(this);
+	}
+	onItemClick(user) {
+		this.props.searchResults(user);
+		this.props.updateDisplay(['Menu']);
+		this.props.updateDisplay(['Menu', 'ViewProfile']);
+		document.querySelector('#searchDropdown').style.display = 'block';
 	}
 	onSubmit() {
 		this.props.searchResults(this.state.results);
@@ -28,27 +35,29 @@ class Search extends Component {
 		let url =
 			new URL(window.location).origin + '/api/users?' + this.state.query;
 		let request = new Request('get', url);
+		if (search.value !== '') {
+			dList.style.display = 'block';
+		} else {
+			dList.style.display = 'none';
+		}
 		request
 			.send()
 			.then(result => {
-				console.log(result);
-				let response = JSON.parse(result.response);
-
-				let dropdown = response.map(e => {
-					return <DropdownItem user={e} />;
+				this.setState({
+					dropdown: [],
+					results: response
 				});
-				dList.style.display = 'block';
-				console.log(dropdown);
-
+				console.log(result.response);
+				let response = JSON.parse(result.response);
+				let dropdown = response.map(e => {
+					return <DropdownItem onClick={this.onItemClick} user={e} />;
+				});
 				this.setState({
 					dropdown: dropdown,
 					results: response
 				});
 			})
 			.catch(err => console.log(err));
-		let timeout = setTimeout(() => {
-			dList.style.display = 'none';
-		}, 3000);
 	}
 	render() {
 		return (
@@ -82,12 +91,18 @@ class DropdownItem extends Component {
 	constructor() {
 		super();
 		this.state = {
+			id: '',
 			firstName: '',
 			lastName: ''
 		};
+		this.onClick = this.onClick.bind(this);
+	}
+	onClick() {
+		this.props.onClick(this.state);
 	}
 	componentWillMount() {
 		let state = {
+			id: this.props.user._id,
 			firstName: this.props.user.firstName,
 			lastName: this.props.user.lastName
 		};
@@ -95,7 +110,7 @@ class DropdownItem extends Component {
 	}
 	render() {
 		return (
-			<div>
+			<div className="dropdownItem" onClick={this.onClick}>
 				{this.state.firstName} {this.state.lastName}
 			</div>
 		);

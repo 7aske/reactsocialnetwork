@@ -38,6 +38,15 @@ body {
 	.search-dropdown {
 		position: absolute;
 		display: none;
+		padding: 2px;
+	}
+}
+.dropdownItem {
+	padding: 5px;
+	border-radius: 3px;
+	&:hover {
+		background-color: wheat;
+		cursor: pointer;
 	}
 }
 .ProfilePicture {

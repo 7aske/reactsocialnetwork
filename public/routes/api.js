@@ -28,8 +28,8 @@ router.get('/user', (req, res) => {
 });
 router.get('/users', (req, res) => {
 	const arg = url.parse(req.url).query;
-	const query = new RegExp(arg);
-	User.find({ firstName: query })
+	const query = new RegExp(arg, 'i');
+	User.find({ $or: [{ firstName: query }, { lastName: query }] })
 		.select({ firstName: 1, lastName: 1 })
 		.exec()
 		.then(result => {
